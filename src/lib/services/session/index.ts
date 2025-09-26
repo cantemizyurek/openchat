@@ -14,7 +14,7 @@ export const createSession = createServerFn({
   method: "POST",
 })
   .inputValidator((data) => SessionCreateSchema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<Session> => {
     const session = await db.insert(schema.sessions).values({
       userId: data.userId,
     });
@@ -24,7 +24,7 @@ export const createSession = createServerFn({
 
 export const getCurrentSession = createServerFn({
   method: "GET",
-}).handler(async () => {
+}).handler(async (): Promise<Session | null> => {
   const sessionId = getCookies()["session"];
 
   if (!sessionId) return null;
@@ -42,7 +42,7 @@ export const getSession = createServerFn({
   method: "GET",
 })
   .inputValidator((data) => SessionSchema.pick({ id: true }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<Session | null> => {
     const [session] = await db
       .select()
       .from(schema.sessions)
