@@ -71,7 +71,7 @@ export const createUser = createServerFn({ method: "POST" })
       .values({
         name: data.name,
         email: data.email,
-        password: data.password,
+        password: await Bun.password.hash(data.password),
       })
       .returning();
 
