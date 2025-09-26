@@ -5,7 +5,7 @@ export const NameSchema = z
   .min(2, "Name must be at least 2 characters long")
   .max(100, "Name must be at most 100 characters long");
 
-export const EmailSchema = z.email("Invalid email address");
+export const EmailSchema = z.email();
 
 export const PasswordSchema = z
   .string()
