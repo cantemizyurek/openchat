@@ -4,6 +4,7 @@ import { db, schema } from "@/lib/db";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { getCookies } from "@tanstack/react-start/server";
+import { getCurrentSession } from "../session";
 
 export interface User {
   readonly id: string;
@@ -11,29 +12,15 @@ export interface User {
   readonly email: string;
 }
 
-export const currentUser = createServerFn({ method: "GET" }).handler(
+export const getCurrentUser = createServerFn({ method: "GET" }).handler(
   async (): Promise<User | null> => {
-    const cookies = getCookies();
-    const session = cookies.session;
-
+    const session = await getCurrentSession();
     if (!session) return null;
 
-    const [res] = await db
-      .select({
-        user: schema.users,
-      })
-      .from(schema.users)
-      .innerJoin(schema.sessions, eq(schema.users.id, schema.sessions.userId))
-      .where(eq(schema.sessions.id, session))
-      .limit(1);
-
-    if (!res) return null;
-
-    return {
-      id: res.user.id,
-      name: res.user.name,
-      email: res.user.email,
-    };
+    const user = await getUser({
+      data: { id: session.userId },
+    });
+    return user;
   },
 );
 
