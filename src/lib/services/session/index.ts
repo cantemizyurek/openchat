@@ -10,6 +10,8 @@ export interface Session {
   expiresAt: Date;
 }
 
+export const COOKIE_NAME = "session";
+
 export const createSession = createServerFn({
   method: "POST",
 })
@@ -25,7 +27,7 @@ export const createSession = createServerFn({
 export const getCurrentSession = createServerFn({
   method: "GET",
 }).handler(async (): Promise<Session | null> => {
-  const sessionId = getCookies()["session"];
+  const sessionId = getCookies()[COOKIE_NAME];
 
   if (!sessionId) return null;
 
@@ -37,6 +39,14 @@ export const getCurrentSession = createServerFn({
 
   return session;
 });
+
+export const deleteSession = createServerFn({
+  method: "POST",
+})
+  .inputValidator((data) => SessionSchema.pick({ id: true }).parse(data))
+  .handler(async ({ data }): Promise<void> => {
+    await db.delete(schema.sessions).where(eq(schema.sessions.id, data.id));
+  });
 
 export const getSession = createServerFn({
   method: "GET",
