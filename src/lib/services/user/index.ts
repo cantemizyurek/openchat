@@ -11,6 +11,10 @@ export interface User {
   readonly email: string;
 }
 
+export interface UserWithPassword extends User {
+  readonly password: string;
+}
+
 export const getCurrentUser = createServerFn({ method: "GET" }).handler(
   async (): Promise<User | null> => {
     const session = await getCurrentSession();
@@ -19,7 +23,13 @@ export const getCurrentUser = createServerFn({ method: "GET" }).handler(
     const user = await getUser({
       data: { id: session.userId },
     });
-    return user;
+    if (!user) return null;
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
   },
 );
 
@@ -33,7 +43,7 @@ export const getUser = createServerFn({
     ]);
     return GetUserSchema.parse(data);
   })
-  .handler(async ({ data }): Promise<User | null> => {
+  .handler(async ({ data }): Promise<UserWithPassword | null> => {
     const filter =
       "id" in data
         ? eq(schema.users.id, data.id)
@@ -46,6 +56,7 @@ export const getUser = createServerFn({
       id: user.id,
       name: user.name,
       email: user.email,
+      password: user.password,
     };
   });
 
