@@ -3,7 +3,6 @@ import { CreateUserSchema, UserSchema } from "./schema";
 import { db, schema } from "@/lib/db";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import { getCookies } from "@tanstack/react-start/server";
 import { getCurrentSession } from "../session";
 
 export interface User {
