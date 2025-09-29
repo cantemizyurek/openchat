@@ -29,12 +29,15 @@ export const sessions = pgTable('sessions', {
     .$defaultFn(() => new Date(Date.now() + duration('30d'))),
 })
 
+export type ChatMessage = UIMessage<{}, {}, {}>
+
 export const chats = pgTable('chats', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  initialMessage: text('initial_message').notNull(),
   name: text('name').notNull(),
-  messages: jsonb('messages').$type<UIMessage[]>().notNull(),
+  messages: jsonb('messages').$type<ChatMessage[]>().notNull(),
   ...timestamps,
 })
