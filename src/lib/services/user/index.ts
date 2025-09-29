@@ -4,6 +4,7 @@ import { db, schema } from "@/lib/db";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { getCurrentSession } from "../session";
+import { hash } from "bcryptjs";
 
 export interface User {
   readonly id: string;
@@ -48,7 +49,7 @@ export const getUser = createServerFn({
       "id" in data
         ? eq(schema.users.id, data.id)
         : eq(schema.users.email, data.email);
-    const [user] = await db.select().from(schema.users).where(filter).limit(1);
+    const [user] = await db.select().from(schema.users).where(filter);
 
     if (!user) return null;
 
@@ -68,7 +69,7 @@ export const createUser = createServerFn({ method: "POST" })
       .values({
         name: data.name,
         email: data.email,
-        password: await Bun.password.hash(data.password),
+        password: await hash(data.password, 12),
       })
       .returning();
 

@@ -20,7 +20,7 @@ export const sessions = pgTable("sessions", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: "cascade" }),
   ...timestamps,
   expiresAt: timestamp("expires_at")
     .notNull()

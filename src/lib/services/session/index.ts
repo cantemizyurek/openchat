@@ -17,9 +17,12 @@ export const createSession = createServerFn({
 })
   .inputValidator((data) => SessionCreateSchema.parse(data))
   .handler(async ({ data }): Promise<Session> => {
-    const session = await db.insert(schema.sessions).values({
-      userId: data.userId,
-    });
+    const [session] = await db
+      .insert(schema.sessions)
+      .values({
+        userId: data.userId,
+      })
+      .returning();
 
     return session;
   });

@@ -1,10 +1,13 @@
-import { drizzle } from "drizzle-orm/bun-sql";
+import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
-import { serverEnv } from "@/config/env";
+import { env } from "@/config/env";
 
-export const db = drizzle(serverEnv.DATABASE_URL, {
+if (!env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is not defined");
+}
+
+export const db = drizzle(env.DATABASE_URL, {
   schema,
-  casing: "snake_case",
 });
 
 export { schema };

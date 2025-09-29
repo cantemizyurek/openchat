@@ -8,14 +8,17 @@ import {
 import { SignInSchema, SignUpSchema } from "./schema";
 import { createUser, getUser } from "../user";
 import { setCookie, deleteCookie } from "@tanstack/react-start/server";
-import { redirect } from "@tanstack/react-router";
+// import { redirect } from "@tanstack/react-router";
 import {
   UserNotFoundError,
   InvalidPasswordError,
   EmailAlreadyExistsError,
 } from "./errors";
+import { compare } from "bcryptjs";
 
-export const signIn = createServerFn()
+export const signIn = createServerFn({
+  method: "POST",
+})
   .inputValidator((data) => SignInSchema.parse(data))
   .handler(async ({ data }) => {
     const user = await getUser({
@@ -26,21 +29,21 @@ export const signIn = createServerFn()
 
     if (!user) throw new UserNotFoundError();
 
-    const passwordMatch = await Bun.password.verify(
-      data.password,
-      user.password,
-    );
+    const passwordMatch = await compare(data.password, user.password);
     if (!passwordMatch) throw new InvalidPasswordError();
 
     const session = await createSession({ data: { userId: user.id } });
     setCookie(COOKIE_NAME, session.id);
 
-    redirect({
-      to: "/",
-    });
+    // RE-ADD ONCE FIXED BECAUSE REDIRECT DOESN'T WORK CURRENTLY
+    // throw redirect({
+    //   to: "/",
+    // });
   });
 
-export const signUp = createServerFn()
+export const signUp = createServerFn({
+  method: "POST",
+})
   .inputValidator((data) => SignUpSchema.parse(data))
   .handler(async ({ data }) => {
     const user = await getUser({
@@ -62,9 +65,10 @@ export const signUp = createServerFn()
     const session = await createSession({ data: { userId: newUser.id } });
     setCookie(COOKIE_NAME, session.id);
 
-    redirect({
-      to: "/",
-    });
+    // RE-ADD ONCE FIXED BECAUSE REDIRECT DOESN'T WORK CURRENTLY
+    // throw redirect({
+    //   to: "/",
+    // });
   });
 
 export const signOut = createServerFn().handler(async () => {
