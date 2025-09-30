@@ -7,7 +7,6 @@ import {
   validateUIMessages,
 } from 'ai'
 import { ChatMessage } from '@/lib/db/schema'
-import { getModels } from '@tokenlens/models'
 
 export const Route = createFileRoute('/api/chat')({
   server: {
@@ -22,18 +21,8 @@ export const Route = createFileRoute('/api/chat')({
           messages,
         })
 
-        const provider =
-          getModels()[model.split(':')[0] as keyof ReturnType<typeof getModels>]
-
-        const modelFn = (await import(
-          /* @vite-ignore */
-          provider.npm
-        )) as {
-          [key: string]: (...args: any[]) => any
-        }
-
         const result = streamText({
-          model: modelFn[model.split(':')[0]](model.split(':')[1]),
+          model,
           messages: convertToModelMessages(validatedMessages),
         })
 

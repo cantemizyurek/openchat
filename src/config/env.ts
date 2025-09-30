@@ -3,8 +3,7 @@ import { z } from 'zod'
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
-  OPENAI_API_KEY: z.string(),
-  ANTHROPIC_API_KEY: z.string(),
+  AI_GATEWAY_API_KEY: z.string(),
 })
 
 const clientEnvSchema = z.object({})

@@ -7,7 +7,7 @@ import {
   PromptInputModelSelectValue,
   PromptInputModelSelectTrigger,
 } from './ai-elements/prompt-input'
-import { getAvailableModels, Provider } from '@/lib/models'
+import { getAvailableModels } from '@/lib/models'
 import { useQuery } from '@tanstack/react-query'
 import { createClientOnlyFn } from '@tanstack/react-start'
 import { LogoDisplay } from './logo-display'
@@ -39,10 +39,10 @@ export function ModelSelector() {
       <PromptInputModelSelectContent>
         {models?.map((model) => (
           <PromptInputModelSelectItem
-            key={model.model}
-            value={`${model.provider}:${model.model}`}
+            key={`${model.provider}/${model.id}`}
+            value={`${model.provider}/${model.id}`}
           >
-            <LogoDisplay provider={model.provider as Provider} />
+            <LogoDisplay provider={model.provider} />
             <span>{model.name}</span>
           </PromptInputModelSelectItem>
         ))}
