@@ -6,10 +6,15 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from '@/components/ai-elements/prompt-input'
-import { getAvailableModels } from '@/lib/models'
+import { ModelSelector } from '@/components/model-selector'
 import { createChat } from '@/lib/services/chat'
 import { getCurrentUser } from '@/lib/services/user'
-import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import {
+  ClientOnly,
+  createFileRoute,
+  redirect,
+  useRouter,
+} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/chat/')({
   component: RouteComponent,
@@ -18,9 +23,7 @@ export const Route = createFileRoute('/chat/')({
     if (!user) {
       throw redirect({ to: '/' })
     }
-    const models = await getAvailableModels()
-    console.log(models)
-    return { user, models }
+    return { user }
   },
 })
 
@@ -49,7 +52,11 @@ function RouteComponent() {
           <PromptInputTextarea />
         </PromptInputBody>
         <PromptInputToolbar>
-          <PromptInputTools></PromptInputTools>
+          <PromptInputTools>
+            <ClientOnly fallback={null}>
+              <ModelSelector />
+            </ClientOnly>
+          </PromptInputTools>
           <PromptInputSubmit disabled={false} status={'ready'} />
         </PromptInputToolbar>
       </PromptInput>

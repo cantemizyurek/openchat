@@ -21,9 +21,9 @@ function RouteComponent() {
   const { user, chats } = Route.useLoaderData()
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="h-screen">
       <AppSidebar user={user} chats={chats} />
-      <SidebarInset>
+      <SidebarInset className="flex flex-col">
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

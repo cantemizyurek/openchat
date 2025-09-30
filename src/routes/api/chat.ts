@@ -7,14 +7,14 @@ import {
   validateUIMessages,
 } from 'ai'
 import { openai } from '@ai-sdk/openai'
-import { metadataSchema } from '@/lib/ai'
 import { ChatMessage } from '@/lib/db/schema'
+import { getModels } from '@tokenlens/models'
 
 export const Route = createFileRoute('/api/chat')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { message, id } = await request.json()
+        const { message, id, model } = await request.json()
 
         const chat = await getChat({ data: { id } })
         const messages = [...chat.messages, message]
@@ -23,8 +23,18 @@ export const Route = createFileRoute('/api/chat')({
           messages,
         })
 
+        const provider =
+          getModels()[model.split(':')[0] as keyof ReturnType<typeof getModels>]
+
+        const modelFn = (await import(
+          /* @vite-ignore */
+          provider.npm
+        )) as {
+          [key: string]: (...args: any[]) => any
+        }
+
         const result = streamText({
-          model: openai('gpt-4.1'),
+          model: modelFn[model.split(':')[0]](model.split(':')[1]),
           messages: convertToModelMessages(validatedMessages),
         })
 
@@ -34,11 +44,13 @@ export const Route = createFileRoute('/api/chat')({
             prefix: 'msg',
             size: 16,
           }),
+          sendReasoning: true,
+
           messageMetadata: ({ part }) => {
             if (part.type === 'start') {
               return {
                 createdAt: Date.now(),
-                model: 'openai:gpt-4o',
+                model: model,
               }
             }
 
