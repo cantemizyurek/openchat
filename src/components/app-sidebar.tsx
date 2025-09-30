@@ -10,11 +10,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from './ui/sidebar'
-import { FlaskConical, MessageCircleIcon, PlusIcon } from 'lucide-react'
+import { FlaskConical, MessageCircleIcon, PlusIcon, XIcon } from 'lucide-react'
 import { User } from '@/lib/services/user'
 import { NavUser } from './nav-user'
-import { Chat } from '@/lib/services/chat'
+import { Chat, deleteChat } from '@/lib/services/chat'
 import { Button } from './ui/button'
+import { motion, AnimatePresence } from 'motion/react'
+import { useState } from 'react'
+import { useRouter } from '@tanstack/react-router'
 
 export function AppSidebar({
   user,
@@ -23,6 +26,9 @@ export function AppSidebar({
   user: User
   chats: Omit<Chat, 'messages'>[]
 }) {
+  const [hoveredChat, setHoveredChat] = useState<string | null>(null)
+  const router = useRouter()
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
@@ -55,7 +61,12 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarMenu>
             {chats.map((chat) => (
-              <SidebarMenuItem key={chat.id}>
+              <SidebarMenuItem
+                key={chat.id}
+                onMouseEnter={() => setHoveredChat(chat.id)}
+                onMouseLeave={() => setHoveredChat(null)}
+                className="relative"
+              >
                 <SidebarMenuButton size="sm" asChild>
                   <Link
                     to={`/chat/$chatId`}
@@ -68,6 +79,32 @@ export function AppSidebar({
                     <span className="truncate"> {chat.name}</span>
                   </Link>
                 </SidebarMenuButton>
+                <AnimatePresence>
+                  {hoveredChat === chat.id && (
+                    <motion.button
+                      initial={{ x: 20, opacity: 0, filter: 'blur(4px)' }}
+                      animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+                      exit={{ x: 20, opacity: 0, filter: 'blur(4px)' }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-destructive/10"
+                      onClick={() => {
+                        deleteChat({
+                          data: {
+                            id: chat.id,
+                          },
+                        })
+                        router.invalidate()
+                        if (
+                          router.state.location.pathname === `/chat/${chat.id}`
+                        ) {
+                          router.navigate({ to: '/chat' })
+                        }
+                      }}
+                    >
+                      <XIcon className="size-4 text-destructive" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

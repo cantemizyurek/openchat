@@ -46,6 +46,7 @@
     "jotai": "^2.15.0",
     "jotai-utils": "^0.0.0",
     "lucide-react": "^0.544.0",
+    "motion": "^12.23.22",
     "nanoid": "^5.1.6",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

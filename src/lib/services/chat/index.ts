@@ -95,6 +95,14 @@ export const getChat = createServerFn({
     }
   })
 
+export const deleteChat = createServerFn({
+  method: 'POST',
+})
+  .inputValidator((data) => ChatSchema.pick({ id: true }).parse(data))
+  .handler(async ({ data }) => {
+    await db.delete(schema.chats).where(eq(schema.chats.id, data.id))
+  })
+
 export const saveChatMessage = createServerFn({
   method: 'POST',
 })
