@@ -8,6 +8,7 @@ import {
   convertToModelMessages,
   createIdGenerator,
   generateId,
+  smoothStream,
   streamText,
   validateUIMessages,
 } from 'ai'
@@ -33,6 +34,10 @@ export const Route = createFileRoute('/api/chat')({
         const result = streamText({
           model,
           messages: convertToModelMessages(validatedMessages),
+          experimental_transform: smoothStream({
+            chunking: 'word',
+            delayInMs: 20,
+          }),
         })
 
         return result.toUIMessageStreamResponse<ChatMessage>({
