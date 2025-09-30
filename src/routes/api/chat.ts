@@ -1,12 +1,18 @@
-import { getChat, saveChatMessage } from '@/lib/services/chat'
+import {
+  getChat,
+  saveActiveStreamId,
+  saveChatMessage,
+} from '@/lib/services/chat'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   convertToModelMessages,
   createIdGenerator,
+  generateId,
   streamText,
   validateUIMessages,
 } from 'ai'
 import { ChatMessage } from '@/lib/db/schema'
+import { createResumableStreamContext } from 'resumable-stream'
 
 export const Route = createFileRoute('/api/chat')({
   server: {
@@ -20,6 +26,9 @@ export const Route = createFileRoute('/api/chat')({
         const validatedMessages = await validateUIMessages({
           messages,
         })
+
+        await saveChatMessage({ data: { id, messages: validatedMessages } })
+        await saveActiveStreamId({ data: { id, activeStreamId: undefined } })
 
         const result = streamText({
           model,
@@ -55,6 +64,19 @@ export const Route = createFileRoute('/api/chat')({
                 messages: messages,
               },
             })
+            await saveActiveStreamId({
+              data: { id, activeStreamId: undefined },
+            })
+          },
+          async consumeSseStream({ stream }) {
+            const streamId = generateId()
+
+            const streamContext = createResumableStreamContext({
+              waitUntil: async (async) => async,
+            })
+            await streamContext.createNewResumableStream(streamId, () => stream)
+
+            await saveActiveStreamId({ data: { id, activeStreamId: streamId } })
           },
         })
       },

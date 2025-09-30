@@ -90,6 +90,7 @@ export const getChat = createServerFn({
       name: chat.name,
       initialMessage: chat.initialMessage,
       messages: chat.messages as any,
+      activeStreamId: chat.activeStreamId,
       createdAt: chat.createdAt,
       updatedAt: chat.updatedAt,
     }
@@ -121,4 +122,17 @@ export const saveChatMessage = createServerFn({
     if (!chat) {
       throw new Error('Failed to save chat message')
     }
+  })
+
+export const saveActiveStreamId = createServerFn({
+  method: 'POST',
+})
+  .inputValidator((data) =>
+    ChatSchema.pick({ id: true, activeStreamId: true }).parse(data)
+  )
+  .handler(async ({ data }) => {
+    await db
+      .update(schema.chats)
+      .set({ activeStreamId: data.activeStreamId || null })
+      .where(eq(schema.chats.id, data.id))
   })

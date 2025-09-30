@@ -52,10 +52,17 @@ function RouteComponent() {
   const { messages, sendMessage, status, stop } = useChat({
     id: chat.id,
     messages: chat.messages,
+    resume: true,
     transport: new DefaultChatTransport({
       api: '/api/chat',
       prepareSendMessagesRequest({ messages, id }) {
         return { body: { message: messages[messages.length - 1], id, model } }
+      },
+      prepareReconnectToStreamRequest: ({ id }) => {
+        return {
+          api: `/api/chat/${id}/stream`,
+          credentials: 'include',
+        }
       },
     }),
     onFinish: () => {

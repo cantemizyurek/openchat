@@ -40,5 +40,6 @@ export const chats = pgTable('chats', {
   initialMessage: text('initial_message').notNull(),
   name: text('name').notNull(),
   messages: jsonb('messages').$type<ChatMessage[]>().notNull(),
+  activeStreamId: text('active_stream_id'),
   ...timestamps,
 })

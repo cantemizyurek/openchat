@@ -16,6 +16,7 @@ import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ChatChatIdIndexRouteImport } from './routes/chat/$chatId/index'
+import { Route as ApiChatChatIdStreamRouteImport } from './routes/api/chat/$chatId/stream'
 
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
@@ -52,33 +53,41 @@ const ChatChatIdIndexRoute = ChatChatIdIndexRouteImport.update({
   path: '/$chatId/',
   getParentRoute: () => ChatRoute,
 } as any)
+const ApiChatChatIdStreamRoute = ApiChatChatIdStreamRouteImport.update({
+  id: '/$chatId/stream',
+  path: '/$chatId/stream',
+  getParentRoute: () => ApiChatRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
-  '/api/chat': typeof ApiChatRoute
+  '/api/chat': typeof ApiChatRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/chat/': typeof ChatIndexRoute
   '/chat/$chatId': typeof ChatChatIdIndexRoute
+  '/api/chat/$chatId/stream': typeof ApiChatChatIdStreamRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/chat': typeof ApiChatRoute
+  '/api/chat': typeof ApiChatRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/chat': typeof ChatIndexRoute
   '/chat/$chatId': typeof ChatChatIdIndexRoute
+  '/api/chat/$chatId/stream': typeof ApiChatChatIdStreamRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
-  '/api/chat': typeof ApiChatRoute
+  '/api/chat': typeof ApiChatRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/chat/': typeof ChatIndexRoute
   '/chat/$chatId/': typeof ChatChatIdIndexRoute
+  '/api/chat/$chatId/stream': typeof ApiChatChatIdStreamRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/chat/'
     | '/chat/$chatId'
+    | '/api/chat/$chatId/stream'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/chat'
     | '/chat/$chatId'
+    | '/api/chat/$chatId/stream'
   id:
     | '__root__'
     | '/'
@@ -107,12 +118,13 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/chat/'
     | '/chat/$chatId/'
+    | '/api/chat/$chatId/stream'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRouteWithChildren
-  ApiChatRoute: typeof ApiChatRoute
+  ApiChatRoute: typeof ApiChatRouteWithChildren
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
 }
@@ -168,6 +180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatChatIdIndexRouteImport
       parentRoute: typeof ChatRoute
     }
+    '/api/chat/$chatId/stream': {
+      id: '/api/chat/$chatId/stream'
+      path: '/$chatId/stream'
+      fullPath: '/api/chat/$chatId/stream'
+      preLoaderRoute: typeof ApiChatChatIdStreamRouteImport
+      parentRoute: typeof ApiChatRoute
+    }
   }
 }
 
@@ -183,10 +202,21 @@ const ChatRouteChildren: ChatRouteChildren = {
 
 const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
 
+interface ApiChatRouteChildren {
+  ApiChatChatIdStreamRoute: typeof ApiChatChatIdStreamRoute
+}
+
+const ApiChatRouteChildren: ApiChatRouteChildren = {
+  ApiChatChatIdStreamRoute: ApiChatChatIdStreamRoute,
+}
+
+const ApiChatRouteWithChildren =
+  ApiChatRoute._addFileChildren(ApiChatRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRouteWithChildren,
-  ApiChatRoute: ApiChatRoute,
+  ApiChatRoute: ApiChatRouteWithChildren,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
 }

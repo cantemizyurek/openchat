@@ -32,7 +32,7 @@ function RouteComponent() {
   const router = useRouter()
 
   return (
-    <div className="h-full w-full flex flex-col items-center justify-between p-4">
+    <div className="h-full w-full flex flex-col items-center justify-between px-4">
       <div></div>
       <PromptInput
         onSubmit={async (data) => {
@@ -46,7 +46,7 @@ function RouteComponent() {
           })
           router.navigate({ to: `/chat/${chat.id}` })
         }}
-        className="max-w-2xl w-full"
+        className="max-w-2xl w-full fixed bottom-4"
       >
         <PromptInputBody>
           <PromptInputTextarea />
