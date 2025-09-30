@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core'
 import { duration } from '@/lib/utils/duration'
 import { UIMessage } from 'ai'
+import { Metadata } from '../ai'
 
 const timestamps = {
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -29,7 +30,7 @@ export const sessions = pgTable('sessions', {
     .$defaultFn(() => new Date(Date.now() + duration('30d'))),
 })
 
-export type ChatMessage = UIMessage<{}, {}, {}>
+export type ChatMessage = UIMessage<Metadata, {}, {}>
 
 export const chats = pgTable('chats', {
   id: uuid('id').primaryKey().defaultRandom(),

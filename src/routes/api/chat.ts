@@ -7,6 +7,8 @@ import {
   validateUIMessages,
 } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { metadataSchema } from '@/lib/ai'
+import { ChatMessage } from '@/lib/db/schema'
 
 export const Route = createFileRoute('/api/chat')({
   server: {
@@ -26,12 +28,26 @@ export const Route = createFileRoute('/api/chat')({
           messages: convertToModelMessages(validatedMessages),
         })
 
-        return result.toUIMessageStreamResponse({
-          originalMessages: validatedMessages,
+        return result.toUIMessageStreamResponse<ChatMessage>({
+          originalMessages: validatedMessages as ChatMessage[],
           generateMessageId: createIdGenerator({
             prefix: 'msg',
             size: 16,
           }),
+          messageMetadata: ({ part }) => {
+            if (part.type === 'start') {
+              return {
+                createdAt: Date.now(),
+                model: 'openai:gpt-4o',
+              }
+            }
+
+            if (part.type === 'finish') {
+              return {
+                totalTokens: part.totalUsage.totalTokens,
+              }
+            }
+          },
           onFinish: async ({ messages }) => {
             await saveChatMessage({
               data: {

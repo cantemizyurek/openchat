@@ -7,10 +7,17 @@ import {
   PromptInputSubmit,
 } from '@/components/ai-elements/prompt-input'
 import { getChat } from '@/lib/services/chat'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { useEffect, useRef, useState } from 'react'
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/ai-elements/conversation'
+import { Message, MessageContent } from '@/components/ai-elements/message'
+import { Response } from '@/components/ai-elements/response'
 
 export const Route = createFileRoute('/chat/$chatId/')({
   component: RouteComponent,
@@ -25,6 +32,7 @@ function RouteComponent() {
   const { chat } = Route.useLoaderData()
   const [input, setInput] = useState('')
   const initialMessageRef = useRef<string | null>(chat.initialMessage)
+  const router = useRouter()
 
   const { messages, sendMessage, status, stop } = useChat({
     id: chat.id,
@@ -35,6 +43,9 @@ function RouteComponent() {
         return { body: { message: messages[messages.length - 1], id } }
       },
     }),
+    onFinish: () => {
+      router.invalidate()
+    },
   })
 
   useEffect(() => {
@@ -48,17 +59,27 @@ function RouteComponent() {
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-between p-4">
-      <div>
-        <div>
+      <Conversation className="relative w-full h-full pb-30">
+        <ConversationContent>
           {messages.map((message) => (
-            <div key={message.id}>
-              {message.parts
-                .map((part) => part.type === 'text' && part.text)
-                .join('')}
-            </div>
+            <Message key={message.id} from={message.role}>
+              <MessageContent
+                variant={message.role === 'user' ? 'contained' : 'flat'}
+              >
+                {message.parts.map((part) => {
+                  switch (part.type) {
+                    case 'text':
+                      return <Response>{part.text}</Response>
+                    default:
+                      return null
+                  }
+                })}
+              </MessageContent>
+            </Message>
           ))}
-        </div>
-      </div>
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
       <PromptInput
         onSubmit={async (data) => {
           if (!data.text) return
@@ -67,7 +88,7 @@ function RouteComponent() {
           })
           setInput('')
         }}
-        className="max-w-2xl w-full"
+        className="max-w-2xl w-full fixed bottom-4"
       >
         <PromptInputBody>
           <PromptInputTextarea

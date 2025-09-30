@@ -6,11 +6,10 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from '@/components/ai-elements/prompt-input'
-import { ChatMessage } from '@/lib/db/schema'
+import { getAvailableModels } from '@/lib/models'
 import { createChat } from '@/lib/services/chat'
 import { getCurrentUser } from '@/lib/services/user'
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
 
 export const Route = createFileRoute('/chat/')({
   component: RouteComponent,
@@ -19,7 +18,9 @@ export const Route = createFileRoute('/chat/')({
     if (!user) {
       throw redirect({ to: '/' })
     }
-    return { user }
+    const models = await getAvailableModels()
+    console.log(models)
+    return { user, models }
   },
 })
 
