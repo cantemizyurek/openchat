@@ -6,7 +6,6 @@ import {
   streamText,
   validateUIMessages,
 } from 'ai'
-import { openai } from '@ai-sdk/openai'
 import { ChatMessage } from '@/lib/db/schema'
 import { getModels } from '@tokenlens/models'
 
