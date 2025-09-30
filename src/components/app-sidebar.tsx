@@ -57,7 +57,13 @@ export function AppSidebar({
             {chats.map((chat) => (
               <SidebarMenuItem key={chat.id}>
                 <SidebarMenuButton size="sm" asChild>
-                  <Link to={`/chat/$chatId`} params={{ chatId: chat.id }}>
+                  <Link
+                    to={`/chat/$chatId`}
+                    params={{ chatId: chat.id }}
+                    activeProps={{
+                      className: 'bg-sidebar-accent',
+                    }}
+                  >
                     <MessageCircleIcon />
                     <span className="truncate"> {chat.name}</span>
                   </Link>
