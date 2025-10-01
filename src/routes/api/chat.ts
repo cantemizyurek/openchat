@@ -38,6 +38,12 @@ export const Route = createFileRoute('/api/chat')({
             chunking: 'word',
             delayInMs: 20,
           }),
+          providerOptions: {
+            openai: {
+              reasoningSummary: 'auto',
+              reasoningEffort: 'medium',
+            },
+          },
         })
 
         return result.toUIMessageStreamResponse<ChatMessage>({
