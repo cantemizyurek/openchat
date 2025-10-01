@@ -4,6 +4,7 @@ import { z } from 'zod'
 const envSchema = z.object({
   DATABASE_URL: z.string(),
   AI_GATEWAY_API_KEY: z.string(),
+  TAVILY_API_KEY: z.string(),
 })
 
 const clientEnvSchema = z.object({})

@@ -27,6 +27,13 @@ import {
   ReasoningContent,
   ReasoningTrigger,
 } from '@/components/ai-elements/reasoning'
+import {
+  WebSearch,
+  WebSearchTrigger,
+  WebSearchContent,
+} from '@/components/tools/web-search'
+import { ChatMessage } from '@/lib/db/schema'
+import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/chat/$chatId/')({
   component: RouteComponent,
@@ -49,7 +56,7 @@ function RouteComponent() {
   const router = useRouter()
   const { model } = getModel()
 
-  const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop } = useChat<ChatMessage>({
     id: chat.id,
     messages: chat.messages,
     resume: true,
@@ -86,6 +93,7 @@ function RouteComponent() {
           {messages.map((message) => (
             <Message key={message.id} from={message.role}>
               <MessageContent
+                className={cn(message.role === 'assistant' && 'w-full')}
                 variant={message.role === 'user' ? 'contained' : 'flat'}
               >
                 {message.parts.map((part, i) => {
@@ -95,6 +103,25 @@ function RouteComponent() {
                         <Response key={`${message.id}-${i}`}>
                           {part.text}
                         </Response>
+                      )
+                    case 'tool-webSearch':
+                      return (
+                        <WebSearch
+                          key={`${message.id}-${i}`}
+                          className="w-full"
+                          isSearching={
+                            !part.output &&
+                            status === 'streaming' &&
+                            i === message.parts.length - 1 &&
+                            message.id === messages.at(-1)?.id
+                          }
+                          resultsCount={part.output?.results?.length ?? 0}
+                        >
+                          <WebSearchTrigger query={part.input?.query} />
+                          {part.output?.results && (
+                            <WebSearchContent results={part.output.results} />
+                          )}
+                        </WebSearch>
                       )
                     case 'reasoning':
                       return (
