@@ -7,7 +7,7 @@ import {
   PromptInputModelSelectValue,
   PromptInputModelSelectTrigger,
 } from './ai-elements/prompt-input'
-import { getAvailableModels } from '@/lib/models'
+import { getAvailableModels } from '@/lib/ai/models'
 import { useQuery } from '@tanstack/react-query'
 import { createClientOnlyFn } from '@tanstack/react-start'
 import { LogoDisplay } from './logo-display'
