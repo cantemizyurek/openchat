@@ -8,7 +8,6 @@ export const Route = createFileRoute('/chat')({
   component: RouteComponent,
   async loader() {
     const user = await getCurrentUser()
-    console.log(user)
     if (!user) {
       throw redirect({ to: '/' })
     }

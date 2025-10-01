@@ -1,6 +1,4 @@
-// import { env } from '@/config/env'
 import { createServerFn } from '@tanstack/react-start'
-import { gateway } from '@ai-sdk/gateway'
 import { getModels } from '@tokenlens/models'
 
 export const getAvailableModels = createServerFn({

@@ -130,7 +130,7 @@ function RouteComponent() {
           })
           setInput('')
         }}
-        className="max-w-2xl w-full fixed bottom-4"
+        className="xl:max-w-2xl 2xl:max-w-3xl lg:max-w-xl max-w-md mx-4 w-full fixed bottom-4"
       >
         <PromptInputBody>
           <PromptInputTextarea

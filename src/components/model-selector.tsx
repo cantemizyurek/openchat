@@ -24,8 +24,6 @@ export function ModelSelector() {
     queryFn: getAvailableModels,
   })
 
-  console.log(models)
-
   return (
     <PromptInputModelSelect
       onValueChange={(value) => {
