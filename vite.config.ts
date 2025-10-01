@@ -3,7 +3,7 @@ import { defineConfig, loadEnv, type ConfigEnv } from 'vite'
 import tsConfigPaths from 'vite-tsconfig-paths'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { nitro } from 'nitro/vite'
+import { nitroV2Plugin } from '@tanstack/nitro-v2-vite-plugin'
 
 export default ({ mode }: ConfigEnv) => {
   Object.assign(process.env, loadEnv(mode, process.cwd(), ''))
@@ -15,7 +15,9 @@ export default ({ mode }: ConfigEnv) => {
       }),
       tailwindcss(),
       tanstackStart(),
-      nitro(),
+      nitroV2Plugin({
+        preset: 'vercel',
+      }),
       viteReact(),
     ],
   })
