@@ -199,4 +199,10 @@
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+  ::selection {
+    @apply bg-white text-black;
+  }
+  ::-moz-selection {
+    @apply bg-white text-black;
+  }
 }
