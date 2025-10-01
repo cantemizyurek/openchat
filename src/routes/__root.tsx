@@ -1,9 +1,6 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/query'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanstackDevtools } from '@tanstack/react-devtools'
 
 import appCss from '../styles.css?url'
 
@@ -41,22 +38,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="dark">
         <QueryClientProvider client={queryClient}>
           {children}
-
-          <TanstackDevtools
-            config={{
-              position: 'bottom-left',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              {
-                name: 'React Query',
-                render: <ReactQueryDevtools />,
-              },
-            ]}
-          />
         </QueryClientProvider>
 
         <Scripts />
