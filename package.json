@@ -49,6 +49,7 @@
     "lucide-react": "^0.544.0",
     "motion": "^12.23.22",
     "nanoid": "^5.1.6",
+    "nitro": "npm:nitro-nightly",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.63.0",

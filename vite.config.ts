@@ -1,20 +1,22 @@
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import { defineConfig, loadEnv, type ConfigEnv } from "vite";
-import tsConfigPaths from "vite-tsconfig-paths";
-import viteReact from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import { defineConfig, loadEnv, type ConfigEnv } from 'vite'
+import tsConfigPaths from 'vite-tsconfig-paths'
+import viteReact from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { nitro } from 'nitro/vite'
 
 export default ({ mode }: ConfigEnv) => {
-  Object.assign(process.env, loadEnv(mode, process.cwd(), ""));
+  Object.assign(process.env, loadEnv(mode, process.cwd(), ''))
 
   return defineConfig({
     plugins: [
       tsConfigPaths({
-        projects: ["./tsconfig.json"],
+        projects: ['./tsconfig.json'],
       }),
       tailwindcss(),
       tanstackStart(),
+      nitro(),
       viteReact(),
     ],
-  });
-};
+  })
+}
